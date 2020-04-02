@@ -5,7 +5,7 @@ from tests.fixtures import MOVE_PAYLOAD
 def test_init():
     height = 2
     width = 3
-    board = Board(height=height, width=width)
+    board = Board.from_height_and_width(height=height, width=width)
     expected = {
         (0, 0): '',
         (0, 1): '',
@@ -18,7 +18,7 @@ def test_init():
 
 
 def test_update_board_with_food():
-    board = Board(height=3, width=3)
+    board = Board.from_height_and_width(height=3, width=3)
     board_data = MOVE_PAYLOAD
     board_data["board"]["snakes"] = []
     board_data["board"]["food"] = [
@@ -40,7 +40,7 @@ def test_update_board_with_food():
 
 
 def test_update_board_with_snakes():
-    board = Board(height=3, width=3)
+    board = Board.from_height_and_width(height=3, width=3)
     board_data = MOVE_PAYLOAD
     board_data["board"]["food"] = []
     board_data["board"]["snakes"] = [
@@ -86,7 +86,7 @@ def test_update_board_with_snakes():
 
 
 def test_moving_down():
-    board = Board(height=3, width=3)
+    board = Board.from_height_and_width(height=3, width=3)
     board_data = MOVE_PAYLOAD
     board_data["board"]["snakes"] = []
     board_data["board"]["food"] = []
@@ -107,7 +107,7 @@ def test_moving_down():
 
 
 def test_moving_right():
-    board = Board(height=3, width=3)
+    board = Board.from_height_and_width(height=3, width=3)
     board_data = MOVE_PAYLOAD
     board_data["board"]["snakes"] = []
     board_data["board"]["food"] = []
@@ -128,7 +128,7 @@ def test_moving_right():
 
 
 def test_moving_up():
-    board = Board(height=3, width=3)
+    board = Board.from_height_and_width(height=3, width=3)
     board_data = MOVE_PAYLOAD
     board_data["board"]["snakes"] = []
     board_data["board"]["food"] = []
@@ -149,7 +149,7 @@ def test_moving_up():
 
 
 def test_moving_left():
-    board = Board(height=3, width=3)
+    board = Board.from_height_and_width(height=3, width=3)
     board_data = MOVE_PAYLOAD
     board_data["board"]["snakes"] = []
     board_data["board"]["food"] = []

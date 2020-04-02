@@ -1,3 +1,6 @@
+from typing import Dict
+
+
 EMPTY = ''
 SNAKE = 'S'
 FOOD = 'F'
@@ -7,14 +10,24 @@ LEFT = 'L'
 RIGHT = 'R'
 
 
+class Coordinate:
+
+    def __init__(self, x: int, y: int):
+        self._x = x
+        self._y = y
+
+
 class Board:
 
-    def __init__(self, height, width):
-        self._height = height
-        self._width = width
-        self._board = {(x, y): EMPTY for x in range(width) for y in range(height)}
+    def __init__(self, starting_board: Dict[Coordinate, str]):
+        self._board = starting_board
         self._my_head = None
         self._my_direction = None
+
+    @classmethod
+    def from_height_and_width(cls, height: int, width: int):
+        starting_board = {(x, y): EMPTY for x in range(width) for y in range(height)}
+        return cls(starting_board)
 
     @property
     def board(self):
