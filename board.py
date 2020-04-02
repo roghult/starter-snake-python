@@ -11,10 +11,15 @@ RIGHT = 'R'
 
 
 class Coordinate:
-
     def __init__(self, x: int, y: int):
         self._x = x
         self._y = y
+
+    def __hash__(self):
+        return hash((self._x, self._y))
+
+    def __eq__(self, other):
+        return (self._x, self._y) == (other._x, other._y)
 
 
 class Board:
@@ -26,7 +31,7 @@ class Board:
 
     @classmethod
     def from_height_and_width(cls, height: int, width: int):
-        starting_board = {(x, y): EMPTY for x in range(width) for y in range(height)}
+        starting_board = {Coordinate(x, y): EMPTY for x in range(width) for y in range(height)}
         return cls(starting_board)
 
     @property
@@ -41,7 +46,7 @@ class Board:
     def _update_food(self, board_data):
         food_coordinates = board_data["board"]["food"]
         for coordinates in food_coordinates:
-            coordinate = (coordinates["x"], coordinates["y"])
+            coordinate = Coordinate(coordinates["x"], coordinates["y"])
             self._board[coordinate] = FOOD
 
     def _update_snakes(self, board_data):
@@ -49,7 +54,7 @@ class Board:
         l = [data["body"] for data in snake_data]
         snake_coordinates = [item for sublist in l for item in sublist]
         for coordinates in snake_coordinates:
-            coordinate = (coordinates["x"], coordinates["y"])
+            coordinate = Coordinate(coordinates["x"], coordinates["y"])
             self._board[coordinate] = SNAKE
 
     def _update_my_snake(self, board_data):

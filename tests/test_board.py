@@ -1,4 +1,4 @@
-from board import Board, FOOD, EMPTY, SNAKE, DOWN, RIGHT, UP, LEFT
+from board import Board, FOOD, EMPTY, SNAKE, DOWN, RIGHT, UP, LEFT, Coordinate
 from tests.fixtures import MOVE_PAYLOAD
 
 
@@ -7,12 +7,12 @@ def test_init():
     width = 3
     board = Board.from_height_and_width(height=height, width=width)
     expected = {
-        (0, 0): '',
-        (0, 1): '',
-        (1, 0): '',
-        (1, 1): '',
-        (2, 0): '',
-        (2, 1): '',
+        Coordinate(0, 0): '',
+        Coordinate(0, 1): '',
+        Coordinate(1, 0): '',
+        Coordinate(1, 1): '',
+        Coordinate(2, 0): '',
+        Coordinate(2, 1): '',
     }
     assert expected == board.board
 
@@ -28,15 +28,15 @@ def test_update_board_with_food():
         }
     ]
     board.update(board_data)
-    assert board.board[(0, 0)] == EMPTY
-    assert board.board[(0, 1)] == EMPTY
-    assert board.board[(0, 2)] == EMPTY
-    assert board.board[(1, 0)] == EMPTY
-    assert board.board[(1, 1)] == EMPTY
-    assert board.board[(1, 2)] == EMPTY
-    assert board.board[(2, 0)] == EMPTY
-    assert board.board[(2, 1)] == FOOD
-    assert board.board[(2, 2)] == EMPTY
+    assert board.board[Coordinate(0, 0)] == EMPTY
+    assert board.board[Coordinate(0, 1)] == EMPTY
+    assert board.board[Coordinate(0, 2)] == EMPTY
+    assert board.board[Coordinate(1, 0)] == EMPTY
+    assert board.board[Coordinate(1, 1)] == EMPTY
+    assert board.board[Coordinate(1, 2)] == EMPTY
+    assert board.board[Coordinate(2, 0)] == EMPTY
+    assert board.board[Coordinate(2, 1)] == FOOD
+    assert board.board[Coordinate(2, 2)] == EMPTY
 
 
 def test_update_board_with_snakes():
@@ -74,15 +74,15 @@ def test_update_board_with_snakes():
 
     board.update(board_data)
 
-    assert board.board[(0, 0)] == SNAKE
-    assert board.board[(0, 1)] == EMPTY
-    assert board.board[(0, 2)] == EMPTY
-    assert board.board[(1, 0)] == SNAKE
-    assert board.board[(1, 1)] == EMPTY
-    assert board.board[(1, 2)] == EMPTY
-    assert board.board[(2, 0)] == EMPTY
-    assert board.board[(2, 1)] == SNAKE
-    assert board.board[(2, 2)] == SNAKE
+    assert board.board[Coordinate(0, 0)] == SNAKE
+    assert board.board[Coordinate(0, 1)] == EMPTY
+    assert board.board[Coordinate(0, 2)] == EMPTY
+    assert board.board[Coordinate(1, 0)] == SNAKE
+    assert board.board[Coordinate(1, 1)] == EMPTY
+    assert board.board[Coordinate(1, 2)] == EMPTY
+    assert board.board[Coordinate(2, 0)] == EMPTY
+    assert board.board[Coordinate(2, 1)] == SNAKE
+    assert board.board[Coordinate(2, 2)] == SNAKE
 
 
 def test_moving_down():
