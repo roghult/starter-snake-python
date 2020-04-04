@@ -3,6 +3,7 @@ from typing import Dict
 
 EMPTY = ''
 SNAKE = 'S'
+HEAD = 'H'
 FOOD = 'F'
 UP = 'U'
 DOWN = 'D'
@@ -51,11 +52,12 @@ class Board:
 
     def _update_snakes(self, board_data):
         snake_data = board_data["board"]["snakes"]
-        l = [data["body"] for data in snake_data]
-        snake_coordinates = [item for sublist in l for item in sublist]
-        for coordinates in snake_coordinates:
-            coordinate = Coordinate(coordinates["x"], coordinates["y"])
-            self._board[coordinate] = SNAKE
+        snakes_coordinates = [data["body"] for data in snake_data]
+        for snake_coordinates in snakes_coordinates:
+            head_coordinate = snake_coordinates[0]
+            self._board[Coordinate(head_coordinate["x"], head_coordinate["y"])] = HEAD
+            for body_coordinate in snake_coordinates[1:]:
+                self._board[Coordinate(body_coordinate["x"], body_coordinate["y"])] = SNAKE
 
     def _update_my_snake(self, board_data):
         my_snake = board_data["you"]["body"]
