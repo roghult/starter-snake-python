@@ -13,14 +13,31 @@ RIGHT = 'R'
 
 class Coordinate:
     def __init__(self, x: int, y: int):
-        self._x = x
-        self._y = y
+        self._x: int = x
+        self._y: int = y
+
+    @property
+    def x(self):
+        return self._x
+
+    @property
+    def y(self):
+        return self._y
+
+    def distance(self, coordinate: 'Coordinate') -> int:
+        return abs(self._x - coordinate._x) + abs(self._y - coordinate._y)
 
     def __hash__(self):
         return hash((self._x, self._y))
 
-    def __eq__(self, other):
+    def __eq__(self, other: 'Coordinate'):
         return (self._x, self._y) == (other._x, other._y)
+
+    def __str__(self):
+        return "({}, {})".format(self._x, self._y)
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class Board:
@@ -30,14 +47,22 @@ class Board:
         self._my_head = None
         self._my_direction = None
 
-    @classmethod
-    def from_height_and_width(cls, height: int, width: int):
-        starting_board = {Coordinate(x, y): EMPTY for x in range(width) for y in range(height)}
-        return cls(starting_board)
+    @property
+    def my_head(self):
+        return self._my_head
 
     @property
     def board(self):
         return self._board
+
+    @property
+    def food_coordinates(self):
+        return [key for (key, value) in self._board.items() if value == FOOD]
+
+    @classmethod
+    def from_height_and_width(cls, height: int, width: int):
+        starting_board = {Coordinate(x, y): EMPTY for x in range(width) for y in range(height)}
+        return cls(starting_board)
 
     def update(self, board_data):
         self._update_food(board_data)
@@ -60,11 +85,13 @@ class Board:
                 self._board[Coordinate(body_coordinate["x"], body_coordinate["y"])] = SNAKE
 
     def _update_my_snake(self, board_data):
-        my_snake = board_data["you"]["body"]
-        if len(my_snake) == 1:
+        my_snake_coordinates = board_data["you"]["body"]
+        my_head_coordinates = my_snake_coordinates[0]
+        self._my_head = Coordinate(my_head_coordinates["x"], my_head_coordinates["y"])
+        if len(my_snake_coordinates) == 1:
             self._my_direction = None
         else:
-            head, body = my_snake[:2]
+            head, body = my_snake_coordinates[:2]
             self._my_direction = self._direction(head, body)
 
     def _direction(self, head, body):

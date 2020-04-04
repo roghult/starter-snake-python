@@ -167,3 +167,17 @@ def test_moving_left():
     }
     board.update(board_data)
     assert board._my_direction == LEFT
+
+
+def test_food_coordiantes():
+    board = Board.from_height_and_width(3, 3)
+    board._board[Coordinate(0, 1)] = FOOD
+    board._board[Coordinate(2, 2)] = FOOD
+    board._board[Coordinate(1, 2)] = FOOD
+
+    result = board.food_coordinates
+    assert result == [
+        Coordinate(0, 1),
+        Coordinate(1, 2),
+        Coordinate(2, 2),
+    ]
