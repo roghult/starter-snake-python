@@ -1,4 +1,4 @@
-from board import Board, FOOD, EMPTY, SNAKE, DOWN, RIGHT, UP, LEFT, Coordinate, HEAD
+from board import Board, FOOD, EMPTY, SNAKE, DOWN, RIGHT, UP, LEFT, Coordinate, OTHER_SNAKE_HEAD, MY_HEAD
 from tests.fixtures import MOVE_PAYLOAD
 
 
@@ -74,7 +74,7 @@ def test_update_board_with_snakes():
 
     board.update(board_data)
 
-    assert board.board[Coordinate(0, 0)] == HEAD
+    assert board.board[Coordinate(0, 0)] == OTHER_SNAKE_HEAD
     assert board.board[Coordinate(0, 1)] == EMPTY
     assert board.board[Coordinate(0, 2)] == EMPTY
     assert board.board[Coordinate(1, 0)] == SNAKE
@@ -82,7 +82,7 @@ def test_update_board_with_snakes():
     assert board.board[Coordinate(1, 2)] == EMPTY
     assert board.board[Coordinate(2, 0)] == EMPTY
     assert board.board[Coordinate(2, 1)] == SNAKE
-    assert board.board[Coordinate(2, 2)] == HEAD
+    assert board.board[Coordinate(2, 2)] == OTHER_SNAKE_HEAD
 
 
 def test_moving_down():
@@ -104,6 +104,8 @@ def test_moving_down():
     }
     board.update(board_data)
     assert board._my_direction == DOWN
+    assert board._my_head == Coordinate(0, 1)
+    assert board._board[board._my_head] == MY_HEAD
 
 
 def test_moving_right():
@@ -125,6 +127,8 @@ def test_moving_right():
     }
     board.update(board_data)
     assert board._my_direction == RIGHT
+    assert board._my_head == Coordinate(1, 0)
+    assert board._board[board._my_head] == MY_HEAD
 
 
 def test_moving_up():
@@ -146,6 +150,8 @@ def test_moving_up():
     }
     board.update(board_data)
     assert board._my_direction == UP
+    assert board._my_head == Coordinate(0, 0)
+    assert board._board[board._my_head] == MY_HEAD
 
 
 def test_moving_left():
@@ -167,9 +173,11 @@ def test_moving_left():
     }
     board.update(board_data)
     assert board._my_direction == LEFT
+    assert board._my_head == Coordinate(0, 0)
+    assert board._board[board._my_head] == MY_HEAD
 
 
-def test_food_coordiantes():
+def test_food_coordinates():
     board = Board.from_height_and_width(3, 3)
     board._board[Coordinate(0, 1)] = FOOD
     board._board[Coordinate(2, 2)] = FOOD

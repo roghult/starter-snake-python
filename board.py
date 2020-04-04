@@ -1,9 +1,9 @@
-from typing import Dict
-
+from typing import Dict, List
 
 EMPTY = ''
 SNAKE = 'S'
-HEAD = 'H'
+MY_HEAD = 'MH'
+OTHER_SNAKE_HEAD = 'H'
 FOOD = 'F'
 UP = 'U'
 DOWN = 'D'
@@ -48,7 +48,7 @@ class Board:
         self._my_direction = None
 
     @property
-    def my_head(self):
+    def my_head(self) -> Coordinate:
         return self._my_head
 
     @property
@@ -56,7 +56,7 @@ class Board:
         return self._board
 
     @property
-    def food_coordinates(self):
+    def food_coordinates(self) -> List[Coordinate]:
         return [key for (key, value) in self._board.items() if value == FOOD]
 
     @classmethod
@@ -80,7 +80,7 @@ class Board:
         snakes_coordinates = [data["body"] for data in snake_data]
         for snake_coordinates in snakes_coordinates:
             head_coordinate = snake_coordinates[0]
-            self._board[Coordinate(head_coordinate["x"], head_coordinate["y"])] = HEAD
+            self._board[Coordinate(head_coordinate["x"], head_coordinate["y"])] = OTHER_SNAKE_HEAD
             for body_coordinate in snake_coordinates[1:]:
                 self._board[Coordinate(body_coordinate["x"], body_coordinate["y"])] = SNAKE
 
@@ -88,6 +88,7 @@ class Board:
         my_snake_coordinates = board_data["you"]["body"]
         my_head_coordinates = my_snake_coordinates[0]
         self._my_head = Coordinate(my_head_coordinates["x"], my_head_coordinates["y"])
+        self._board[self._my_head] = MY_HEAD
         if len(my_snake_coordinates) == 1:
             self._my_direction = None
         else:
