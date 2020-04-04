@@ -59,6 +59,10 @@ class Board:
     def food_coordinates(self) -> List[Coordinate]:
         return [key for (key, value) in self._board.items() if value == FOOD]
 
+    @property
+    def opponent_heads(self) -> List[Coordinate]:
+        return [key for (key, value) in self._board.items() if value == OTHER_SNAKE_HEAD]
+
     @classmethod
     def from_height_and_width(cls, height: int, width: int):
         starting_board = {Coordinate(x, y): EMPTY for x in range(width) for y in range(height)}

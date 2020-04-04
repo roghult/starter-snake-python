@@ -189,3 +189,17 @@ def test_food_coordinates():
         Coordinate(1, 2),
         Coordinate(2, 2),
     ]
+
+
+def test_opponent_heads():
+    board = Board.from_height_and_width(3, 3)
+    board._board[Coordinate(0, 1)] = OTHER_SNAKE_HEAD
+    board._board[Coordinate(2, 2)] = OTHER_SNAKE_HEAD
+    board._board[Coordinate(1, 2)] = OTHER_SNAKE_HEAD
+
+    result = board.opponent_heads
+    assert result == [
+        Coordinate(0, 1),
+        Coordinate(1, 2),
+        Coordinate(2, 2),
+    ]
