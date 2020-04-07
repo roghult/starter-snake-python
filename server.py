@@ -1,7 +1,9 @@
 import os
-import random
 
 import cherrypy
+
+from board import Board
+from move import determine_move
 
 """
 This is a simple Battlesnake server written in Python.
@@ -10,10 +12,13 @@ For instructions see https://github.com/BattlesnakeOfficial/starter-snake-python
 
 
 class Battlesnake(object):
+
+    games = dict()
+
     @cherrypy.expose
     def index(self):
         # If you open your snake URL in a browser you should see this message.
-        return "Your Battlesnake is alive!"
+        return "Ongoing games: {}".format(self.games)
 
     @cherrypy.expose
     def ping(self):
@@ -29,6 +34,13 @@ class Battlesnake(object):
         # TODO: Use this function to decide how your snake is going to look on the board.
         data = cherrypy.request.json
         print("START")
+        game_id = data["game"]["id"]
+        height = data["board"]["height"]
+        width = data["board"]["width"]
+        board = Board.from_height_and_width(height, width)
+        board.update(data)
+        self.games[game_id] = board
+
         return {"color": "#888888", "headType": "regular", "tailType": "regular"}
 
     @cherrypy.expose
@@ -39,10 +51,9 @@ class Battlesnake(object):
         # Valid moves are "up", "down", "left", or "right".
         # TODO: Use the information in cherrypy.request.json to decide your next move.
         data = cherrypy.request.json
-
-        # Choose a random direction to move in
-        possible_moves = ["up", "down", "left", "right"]
-        move = random.choice(possible_moves)
+        board = self.game_board(data)
+        board.update(data)
+        move = determine_move(board)
 
         print(f"MOVE: {move}")
         return {"move": move}
@@ -55,6 +66,10 @@ class Battlesnake(object):
         data = cherrypy.request.json
         print("END")
         return "ok"
+
+    def game_board(self, data):
+        game_id = data["game"]["id"]
+        return self.games[game_id]
 
 
 if __name__ == "__main__":

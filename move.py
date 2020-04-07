@@ -10,7 +10,7 @@ MOVE_RIGHT = "right"
 ALL_MOVES = [MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT]
 
 
-def move(board: Board) -> str:
+def determine_move(board: Board) -> str:
     closest_food_coordinate = food_that_i_am_closest(board)
     if closest_food_coordinate is None:
         move_in_direction = random_move_without_collision(board)
