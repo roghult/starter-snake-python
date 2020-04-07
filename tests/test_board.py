@@ -1,4 +1,4 @@
-from board import Board, FOOD, EMPTY, SNAKE, DOWN, RIGHT, UP, LEFT, Coordinate, OTHER_SNAKE_HEAD, MY_HEAD
+from board import Board, FOOD, EMPTY, SNAKE, DIRECTION_DOWN, DIRECTION_RIGHT, DIRECTION_UP, DIRECTION_LEFT, Coordinate, OTHER_SNAKE_HEAD, MY_HEAD
 from tests.fixtures import MOVE_PAYLOAD
 
 
@@ -103,7 +103,7 @@ def test_moving_down():
             ]
     }
     board.update(board_data)
-    assert board._my_direction == DOWN
+    assert board._my_direction == DIRECTION_DOWN
     assert board._my_head == Coordinate(0, 1)
     assert board._board[board._my_head] == MY_HEAD
 
@@ -126,7 +126,7 @@ def test_moving_right():
             ]
     }
     board.update(board_data)
-    assert board._my_direction == RIGHT
+    assert board._my_direction == DIRECTION_RIGHT
     assert board._my_head == Coordinate(1, 0)
     assert board._board[board._my_head] == MY_HEAD
 
@@ -149,7 +149,7 @@ def test_moving_up():
             ]
     }
     board.update(board_data)
-    assert board._my_direction == UP
+    assert board._my_direction == DIRECTION_UP
     assert board._my_head == Coordinate(0, 0)
     assert board._board[board._my_head] == MY_HEAD
 
@@ -172,7 +172,7 @@ def test_moving_left():
             ]
     }
     board.update(board_data)
-    assert board._my_direction == LEFT
+    assert board._my_direction == DIRECTION_LEFT
     assert board._my_head == Coordinate(0, 0)
     assert board._board[board._my_head] == MY_HEAD
 

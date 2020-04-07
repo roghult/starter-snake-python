@@ -1,14 +1,14 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 EMPTY = ''
 SNAKE = 'S'
 MY_HEAD = 'MH'
 OTHER_SNAKE_HEAD = 'H'
 FOOD = 'F'
-UP = 'U'
-DOWN = 'D'
-LEFT = 'L'
-RIGHT = 'R'
+DIRECTION_UP = 'U'
+DIRECTION_DOWN = 'D'
+DIRECTION_LEFT = 'L'
+DIRECTION_RIGHT = 'R'
 
 
 class Coordinate:
@@ -23,6 +23,19 @@ class Coordinate:
     @property
     def y(self):
         return self._y
+
+    def move(self, direction: str) -> Optional["Coordinate"]:
+        x = self.x
+        y = self.y
+        if direction == DIRECTION_UP:
+            y -= 1
+        elif direction == DIRECTION_DOWN:
+            y += 1
+        elif direction == DIRECTION_LEFT:
+            x -= 1
+        elif direction == DIRECTION_RIGHT:
+            x += 1
+        return Coordinate(x, y)
 
     def distance(self, coordinate: 'Coordinate') -> int:
         return abs(self._x - coordinate._x) + abs(self._y - coordinate._y)
@@ -44,7 +57,7 @@ class Board:
 
     def __init__(self, starting_board: Dict[Coordinate, str]):
         self._board = starting_board
-        self._my_head = None
+        self._my_head: Optional[Coordinate] = None
         self._my_direction = None
 
     @property
@@ -62,6 +75,11 @@ class Board:
     @property
     def opponent_heads(self) -> List[Coordinate]:
         return [key for (key, value) in self._board.items() if value == OTHER_SNAKE_HEAD]
+
+    def can_move_in_direction(self, direction: str) -> bool:
+        coordinate = self._my_head.move(direction)
+        in_direction = self._board.get(coordinate)
+        return in_direction in [FOOD, EMPTY]
 
     @classmethod
     def from_height_and_width(cls, height: int, width: int):
@@ -103,12 +121,12 @@ class Board:
         x_diff = head['x'] - body['x']
         y_diff = head['y'] - body['y']
         if x_diff < 0:
-            return LEFT
+            return DIRECTION_LEFT
         elif x_diff > 0:
-            return RIGHT
+            return DIRECTION_RIGHT
         elif y_diff > 0:
-            return DOWN
+            return DIRECTION_DOWN
         elif y_diff < 0:
-            return UP
+            return DIRECTION_UP
         else:
             return SNAKE

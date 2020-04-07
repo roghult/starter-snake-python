@@ -1,19 +1,28 @@
+import random
 from typing import Optional
 
 from board import Board, Coordinate
 
-UP = "up"
-DOWN = "down"
-LEFT = "left"
-RIGHT = "right"
+MOVE_UP = "up"
+MOVE_DOWN = "down"
+MOVE_LEFT = "left"
+MOVE_RIGHT = "right"
+ALL_MOVES = [MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT]
 
 
-def move(board_data):
-    pass
+def move(board: Board) -> str:
+    closest_food_coordinate = food_that_i_am_closest(board)
+    if closest_food_coordinate is None:
+        move_in_direction = random_move_without_collision(board)
+    else:
+        move_in_direction = closest_food_coordinate
+    return move_in_direction
 
 
-def avoid_collision():
-    pass
+def random_move_without_collision(board):
+    # find coordinates I actually can move to
+    available_moves = [move for move in ALL_MOVES if board.can_move_in_direction(move)]
+    return random.choice(available_moves)
 
 
 def food_that_i_am_closest(board: Board) -> Optional[Coordinate]:
