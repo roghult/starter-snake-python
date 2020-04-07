@@ -34,7 +34,7 @@ class Battlesnake(object):
         # TODO: Use this function to decide how your snake is going to look on the board.
         data = cherrypy.request.json
         print("START")
-        game_id = data["game"]["id"]
+        game_id = self.game_id(data)
         height = data["board"]["height"]
         width = data["board"]["width"]
         board = Board.from_height_and_width(height, width)
@@ -64,12 +64,17 @@ class Battlesnake(object):
         # This function is called when a game your snake was in ends.
         # It's purely for informational purposes, you don't have to make any decisions here.
         data = cherrypy.request.json
-        print("END")
+        game_id = self.game_id(data)
+        print("Ending game {}".format(game_id))
+        del self.games[game_id]
         return "ok"
 
     def game_board(self, data):
-        game_id = data["game"]["id"]
+        game_id = self.game_id(data)
         return self.games[game_id]
+
+    def game_id(self, data):
+        return data["game"]["id"]
 
 
 if __name__ == "__main__":
