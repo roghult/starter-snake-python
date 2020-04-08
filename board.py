@@ -131,9 +131,14 @@ class Board:
         return cls(starting_board)
 
     def update(self, board_data):
+        self._clean_board()
         self._update_food(board_data)
         self._update_snakes(board_data)
         self._update_my_snake(board_data)
+
+    def _clean_board(self):
+        for key in self._board.keys():
+            self._board[key] = EMPTY
 
     def _update_food(self, board_data):
         food_coordinates = board_data["board"]["food"]
