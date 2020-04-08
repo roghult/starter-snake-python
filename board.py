@@ -52,7 +52,7 @@ class Coordinate:
         elif y_diff < 0:
             return DIRECTION_UP
         else:
-            raise Exception("Unknown direction")
+            return None
 
     def __hash__(self):
         return hash((self._x, self._y))
