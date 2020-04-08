@@ -19,7 +19,7 @@ def available_moves(board: Board) -> Set[str]:
 
 def random_move_without_collision(board: Board):
     # find coordinates I actually can move to
-    return random.choice(available_moves(board))
+    return random.choice(list(available_moves(board)))
 
 
 def move_from_direction(board: Board, direction: str) -> Optional[str]:
