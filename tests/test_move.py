@@ -1,5 +1,5 @@
-from board import Board, Coordinate, EMPTY, OTHER_SNAKE_HEAD, FOOD, MY_HEAD
-from move import food_that_i_am_closest, MOVE_RIGHT, MOVE_UP
+from board import Board, Coordinate, EMPTY, OTHER_SNAKE_HEAD, FOOD, MY_HEAD, MOVE_UP, MOVE_DOWN
+from move import food_that_i_am_closest
 
 
 def test_food_that_i_am_closest_without_other_snakes():
@@ -40,7 +40,7 @@ def test_food_that_i_am_closest_without_other_snakes():
     board._my_head = Coordinate(1, 1)
 
     result = food_that_i_am_closest(board)
-    assert result == MOVE_RIGHT
+    assert result == MOVE_DOWN
 
 
 def test_food_that_i_am_closest_with_other_snakes():

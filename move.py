@@ -1,20 +1,7 @@
 import random
-from typing import Optional
+from typing import Optional, Set
 
-from board import Board, DIRECTION_UP, DIRECTION_DOWN, DIRECTION_RIGHT, DIRECTION_LEFT
-
-MOVE_UP = "up"
-MOVE_DOWN = "down"
-MOVE_LEFT = "left"
-MOVE_RIGHT = "right"
-ALL_MOVES = [MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT]
-
-MOVE_BY_DIRECTION = {
-    DIRECTION_UP: MOVE_UP,
-    DIRECTION_DOWN: MOVE_DOWN,
-    DIRECTION_RIGHT: MOVE_RIGHT,
-    DIRECTION_LEFT: MOVE_LEFT
-}
+from board import Board, ALL_MOVES, MOVES_BY_DIRECTION
 
 
 def determine_move(board: Board) -> str:
@@ -26,10 +13,22 @@ def determine_move(board: Board) -> str:
     return move_in_direction
 
 
-def random_move_without_collision(board):
+def available_moves(board: Board) -> Set[str]:
+    return {move for move in ALL_MOVES if board.can_move(move)}
+
+
+def random_move_without_collision(board: Board):
     # find coordinates I actually can move to
-    available_moves = [move for move in ALL_MOVES if board.can_move_in_direction(move)]
-    return random.choice(available_moves)
+    return random.choice(available_moves(board))
+
+
+def move_from_direction(board: Board, direction: str) -> Optional[str]:
+    moves = available_moves(board)
+    moves_in_direction = MOVES_BY_DIRECTION[direction]
+    good_moves = moves.intersection(moves_in_direction)
+    if len(good_moves) > 0:
+        return good_moves.pop()
+    return None
 
 
 def food_that_i_am_closest(board: Board) -> Optional[str]:
@@ -40,6 +39,6 @@ def food_that_i_am_closest(board: Board) -> Optional[str]:
     for food_coordinate, distance in sorted_food_coordinate_and_distance:
         opponent_distances = [each.distance(food_coordinate) for each in board.opponent_heads]
         if all(each >= distance for each in opponent_distances):
-            return MOVE_BY_DIRECTION[food_coordinate.direction_from(board.my_head)]
+            return move_from_direction(board, food_coordinate.direction_from(board.my_head))
 
     return None

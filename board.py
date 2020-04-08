@@ -9,6 +9,28 @@ DIRECTION_UP = 'U'
 DIRECTION_DOWN = 'D'
 DIRECTION_LEFT = 'L'
 DIRECTION_RIGHT = 'R'
+DIRECTION_UP_RIGHT = 'UR'
+DIRECTION_DOWN_RIGHT = 'DR'
+DIRECTION_DOWN_LEFT = 'DL'
+DIRECTION_UP_LEFT = 'UL'
+MOVABLE_DIRECTIONS = [DIRECTION_UP, DIRECTION_DOWN, DIRECTION_LEFT, DIRECTION_RIGHT]
+
+MOVE_UP = "up"
+MOVE_DOWN = "down"
+MOVE_LEFT = "left"
+MOVE_RIGHT = "right"
+ALL_MOVES = [MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT]
+
+MOVES_BY_DIRECTION = {
+    DIRECTION_UP: {MOVE_UP},
+    DIRECTION_DOWN: {MOVE_DOWN},
+    DIRECTION_RIGHT: {MOVE_RIGHT},
+    DIRECTION_LEFT: {MOVE_LEFT},
+    DIRECTION_UP_RIGHT: {MOVE_UP, MOVE_RIGHT},
+    DIRECTION_DOWN_RIGHT: {MOVE_DOWN, MOVE_RIGHT},
+    DIRECTION_DOWN_LEFT: {MOVE_DOWN, MOVE_LEFT},
+    DIRECTION_UP_LEFT: {MOVE_UP, MOVE_LEFT},
+}
 
 
 class Coordinate:
@@ -24,16 +46,16 @@ class Coordinate:
     def y(self):
         return self._y
 
-    def move(self, direction: str) -> Optional["Coordinate"]:
+    def move(self, move: str) -> Optional["Coordinate"]:
         x = self.x
         y = self.y
-        if direction == DIRECTION_UP:
+        if move == MOVE_UP:
             y -= 1
-        elif direction == DIRECTION_DOWN:
+        elif move == MOVE_DOWN:
             y += 1
-        elif direction == DIRECTION_LEFT:
+        elif move == MOVE_LEFT:
             x -= 1
-        elif direction == DIRECTION_RIGHT:
+        elif move == MOVE_RIGHT:
             x += 1
         return Coordinate(x, y)
 
@@ -43,7 +65,15 @@ class Coordinate:
     def direction_from(self, coordinate: 'Coordinate') -> str:
         x_diff = self.x - coordinate.x
         y_diff = self.y - coordinate.y
-        if x_diff < 0:
+        if x_diff > 0 > y_diff:
+            return DIRECTION_UP_RIGHT
+        elif x_diff > 0 and y_diff > 0:
+            return DIRECTION_DOWN_RIGHT
+        elif x_diff < 0 < y_diff:
+            return DIRECTION_DOWN_LEFT
+        elif x_diff < 0 and y_diff < 0:
+            return DIRECTION_UP_LEFT
+        elif x_diff < 0:
             return DIRECTION_LEFT
         elif x_diff > 0:
             return DIRECTION_RIGHT
@@ -90,8 +120,8 @@ class Board:
     def opponent_heads(self) -> List[Coordinate]:
         return [key for (key, value) in self._board.items() if value == OTHER_SNAKE_HEAD]
 
-    def can_move_in_direction(self, direction: str) -> bool:
-        coordinate = self._my_head.move(direction)
+    def can_move(self, move: str) -> bool:
+        coordinate = self._my_head.move(move)
         in_direction = self._board.get(coordinate)
         return in_direction in [FOOD, EMPTY]
 
