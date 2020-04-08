@@ -1,13 +1,20 @@
 import random
 from typing import Optional
 
-from board import Board, Coordinate
+from board import Board, DIRECTION_UP, DIRECTION_DOWN, DIRECTION_RIGHT, DIRECTION_LEFT
 
 MOVE_UP = "up"
 MOVE_DOWN = "down"
 MOVE_LEFT = "left"
 MOVE_RIGHT = "right"
 ALL_MOVES = [MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT]
+
+MOVE_BY_DIRECTION = {
+    DIRECTION_UP: MOVE_UP,
+    DIRECTION_DOWN: MOVE_DOWN,
+    DIRECTION_RIGHT: MOVE_RIGHT,
+    DIRECTION_LEFT: MOVE_LEFT
+}
 
 
 def determine_move(board: Board) -> str:
@@ -25,14 +32,14 @@ def random_move_without_collision(board):
     return random.choice(available_moves)
 
 
-def food_that_i_am_closest(board: Board) -> Optional[Coordinate]:
+def food_that_i_am_closest(board: Board) -> Optional[str]:
     sorted_food_coordinate_and_distance = sorted([
         (food_coord, board.my_head.distance(food_coord)) for food_coord in board.food_coordinates
     ], key=lambda e: e[1])
 
     for food_coordinate, distance in sorted_food_coordinate_and_distance:
         opponent_distances = [each.distance(food_coordinate) for each in board.opponent_heads]
-        if all(each > distance for each in opponent_distances):
-            return food_coordinate
+        if all(each >= distance for each in opponent_distances):
+            return MOVE_BY_DIRECTION[food_coordinate.direction_from(board.my_head)]
 
     return None

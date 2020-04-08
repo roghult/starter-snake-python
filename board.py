@@ -40,6 +40,20 @@ class Coordinate:
     def distance(self, coordinate: 'Coordinate') -> int:
         return abs(self._x - coordinate._x) + abs(self._y - coordinate._y)
 
+    def direction_from(self, coordinate: 'Coordinate') -> str:
+        x_diff = self.x - coordinate.x
+        y_diff = self.y - coordinate.y
+        if x_diff < 0:
+            return DIRECTION_LEFT
+        elif x_diff > 0:
+            return DIRECTION_RIGHT
+        elif y_diff > 0:
+            return DIRECTION_DOWN
+        elif y_diff < 0:
+            return DIRECTION_UP
+        else:
+            raise Exception("Unknown direction")
+
     def __hash__(self):
         return hash((self._x, self._y))
 
@@ -115,18 +129,6 @@ class Board:
             self._my_direction = None
         else:
             head, body = my_snake_coordinates[:2]
-            self._my_direction = self._direction(head, body)
-
-    def _direction(self, head, body):
-        x_diff = head['x'] - body['x']
-        y_diff = head['y'] - body['y']
-        if x_diff < 0:
-            return DIRECTION_LEFT
-        elif x_diff > 0:
-            return DIRECTION_RIGHT
-        elif y_diff > 0:
-            return DIRECTION_DOWN
-        elif y_diff < 0:
-            return DIRECTION_UP
-        else:
-            return SNAKE
+            head_coordinate = Coordinate(head['x'], head['y'])
+            body_coordinate = Coordinate(body['x'], body['y'])
+            self._my_direction = head_coordinate.direction_from(body_coordinate)
