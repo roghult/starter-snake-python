@@ -1,4 +1,5 @@
-from board import Board, FOOD, EMPTY, SNAKE, DIRECTION_DOWN, DIRECTION_RIGHT, DIRECTION_UP, DIRECTION_LEFT, Coordinate, OTHER_SNAKE_HEAD, MY_HEAD
+from board import Board, FOOD, EMPTY, SNAKE, DIRECTION_DOWN, DIRECTION_RIGHT, DIRECTION_UP, DIRECTION_LEFT, Coordinate, \
+    OTHER_SNAKE_HEAD, MY_HEAD, MOVE_RIGHT, MOVE_UP
 from tests.fixtures import MOVE_PAYLOAD
 
 
@@ -203,3 +204,36 @@ def test_opponent_heads():
         Coordinate(1, 2),
         Coordinate(2, 2),
     ]
+
+
+def test_area_value_above():
+    # ##F##
+    # SS#SS
+    # ##M##
+    # #####
+    # #####
+    board = Board.from_height_and_width(5, 5)
+    board._board[Coordinate(0, 1)] = OTHER_SNAKE_HEAD
+    board._board[Coordinate(1, 1)] = OTHER_SNAKE_HEAD
+    board._board[Coordinate(3, 1)] = OTHER_SNAKE_HEAD
+    board._board[Coordinate(4, 1)] = OTHER_SNAKE_HEAD
+    board._board[Coordinate(2, 0)] = FOOD
+    board._my_head = Coordinate(2, 2)
+    board._board[board.my_head] = MY_HEAD
+
+    result = board.area_value(MOVE_UP)
+    assert result == 5.5
+
+
+def test_area_value_all_empty():
+    # #####
+    # #####
+    # ##M##
+    # #####
+    # #####
+    board = Board.from_height_and_width(5, 5)
+    board._my_head = Coordinate(2, 2)
+    board._board[board.my_head] = MY_HEAD
+
+    result = board.area_value(MOVE_RIGHT)
+    assert result == 44

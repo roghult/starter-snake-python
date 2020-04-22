@@ -1,29 +1,30 @@
 import random
 from typing import Optional, Set
 
-from board import Board, ALL_MOVES, MOVES_BY_DIRECTION
+from board import Board, MOVES_BY_DIRECTION, MOVE_UP
 
 
 def determine_move(board: Board) -> str:
-    closest_food_coordinate = food_that_i_am_closest(board)
-    if closest_food_coordinate is None:
-        move_in_direction = random_move_without_collision(board)
-    else:
-        move_in_direction = closest_food_coordinate
-    return move_in_direction
+    available_moves = board.available_moves()
+    if len(available_moves) == 0:
+        return MOVE_UP
+
+    best_move = move_towards_largest_area(board, available_moves)
+    return best_move
 
 
-def available_moves(board: Board) -> Set[str]:
-    return {move for move in ALL_MOVES if board.can_move(move)}
+def move_towards_largest_area(board: Board, moves: Set[str]) -> str:
+    sorted_directions = sorted([(move, board.area_value(move)) for move in moves], key=lambda x: x[1], reverse=True)
+    return sorted_directions[0][0]
 
 
 def random_move_without_collision(board: Board):
     # find coordinates I actually can move to
-    return random.choice(list(available_moves(board)))
+    return random.choice(list(board.available_moves()))
 
 
 def move_from_direction(board: Board, direction: str) -> Optional[str]:
-    moves = available_moves(board)
+    moves = board.available_moves()
     moves_in_direction = MOVES_BY_DIRECTION[direction]
     good_moves = moves.intersection(moves_in_direction)
     if len(good_moves) > 0:

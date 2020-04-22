@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Set
 
 EMPTY = ''
 SNAKE = 'S'
@@ -46,7 +46,7 @@ class Coordinate:
     def y(self):
         return self._y
 
-    def move(self, move: str) -> Optional["Coordinate"]:
+    def move(self, move: str) -> "Coordinate":
         x = self.x
         y = self.y
         if move == MOVE_UP:
@@ -125,8 +125,42 @@ class Board:
     def opponent_heads(self) -> List[Coordinate]:
         return [key for (key, value) in self._board.items() if value == OTHER_SNAKE_HEAD]
 
-    def can_move(self, move: str) -> bool:
-        coordinate = self._my_head.move(move)
+    def area_value(self, move: str) -> int:
+        """
+        Calculates the value for the are available in the given direction
+        from the head. The value is the sum of all values for nodes that can
+        be visited. A node value is calculated as follows:
+        0p: there are no exits from the node
+        1p: there is one exit from the node
+        2p: there is more than one exit from the node
+        +0.5p: if the node contains FOOD
+        """
+        value = 0
+        start = self.my_head.move(move)
+        queue = [start]
+        visited = set()
+        while queue:
+            coordinate = queue.pop(0)
+            visited.add(coordinate)
+            moves = self.available_moves(coordinate)
+            if self._board[coordinate] == FOOD:
+                value += 0.5
+            if len(moves) == 2:
+                value += 1
+            if len(moves) > 2:
+                value += 2
+            move_coordinates = [coordinate.move(move) for move in moves]
+            move_coordinates = [each for each in move_coordinates if each not in visited and each not in queue]
+            queue.extend(move_coordinates)
+        return value
+
+    def available_moves(self, origin=None) -> Set[str]:
+        return {move for move in ALL_MOVES if self.can_move(move, origin)}
+
+    def can_move(self, move: str, origin=None) -> bool:
+        if origin is None:
+            origin = self._my_head
+        coordinate = origin.move(move)
         in_direction = self._board.get(coordinate)
         return in_direction in [FOOD, EMPTY]
 
