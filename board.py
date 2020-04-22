@@ -104,6 +104,11 @@ class Board:
         self._my_head: Optional[Coordinate] = None
         self._my_direction = None
 
+    @classmethod
+    def from_height_and_width(cls, height: int, width: int):
+        starting_board = {Coordinate(x, y): EMPTY for x in range(width) for y in range(height)}
+        return cls(starting_board)
+
     @property
     def my_head(self) -> Coordinate:
         return self._my_head
@@ -124,11 +129,6 @@ class Board:
         coordinate = self._my_head.move(move)
         in_direction = self._board.get(coordinate)
         return in_direction in [FOOD, EMPTY]
-
-    @classmethod
-    def from_height_and_width(cls, height: int, width: int):
-        starting_board = {Coordinate(x, y): EMPTY for x in range(width) for y in range(height)}
-        return cls(starting_board)
 
     def update(self, board_data):
         self._clean_board()
