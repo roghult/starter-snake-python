@@ -41,7 +41,7 @@ class Battlesnake(object):
         board.update(data)
         self.games[game_id] = board
 
-        return {"color": "#888888", "headType": "regular", "tailType": "regular"}
+        return {"color": "#1a9128", "headType": "bendr", "tailType": "skinny"}
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
