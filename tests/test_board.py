@@ -1,5 +1,5 @@
 from board import Board, FOOD, EMPTY, SNAKE, DIRECTION_DOWN, DIRECTION_RIGHT, DIRECTION_UP, DIRECTION_LEFT, Coordinate, \
-    OTHER_SNAKE_HEAD, MY_HEAD, MOVE_RIGHT, MOVE_UP
+    OTHER_SNAKE_HEAD, MY_HEAD, MOVE_RIGHT, MOVE_UP, MY_BODY
 from tests.fixtures import MOVE_PAYLOAD
 
 
@@ -72,15 +72,33 @@ def test_update_board_with_snakes():
             ]
         }
     ]
+    board_data["you"]["body"] = [
+        {
+            "x": 0,
+            "y": 2
+        },
+        {
+            "x": 0,
+            "y": 1
+        },
+        {
+            "x": 1,
+            "y": 1
+        },
+        {
+            "x": 1,
+            "y": 2
+        },
+    ]
 
     board.update(board_data)
 
     assert board.board[Coordinate(0, 0)] == OTHER_SNAKE_HEAD
-    assert board.board[Coordinate(0, 1)] == EMPTY
-    assert board.board[Coordinate(0, 2)] == EMPTY
+    assert board.board[Coordinate(0, 1)] == MY_BODY
+    assert board.board[Coordinate(0, 2)] == MY_HEAD
     assert board.board[Coordinate(1, 0)] == SNAKE
-    assert board.board[Coordinate(1, 1)] == EMPTY
-    assert board.board[Coordinate(1, 2)] == EMPTY
+    assert board.board[Coordinate(1, 1)] == MY_BODY
+    assert board.board[Coordinate(1, 2)] == MY_BODY
     assert board.board[Coordinate(2, 0)] == EMPTY
     assert board.board[Coordinate(2, 1)] == SNAKE
     assert board.board[Coordinate(2, 2)] == OTHER_SNAKE_HEAD
@@ -221,8 +239,8 @@ def test_area_value_above():
     board._my_head = Coordinate(2, 2)
     board._board[board.my_head] = MY_HEAD
 
-    result = board.area_value(MOVE_UP)
-    assert result == 5.5
+    result = board.area_rank(MOVE_UP)
+    assert result == 6.5
 
 
 def test_area_value_all_empty():
@@ -235,5 +253,21 @@ def test_area_value_all_empty():
     board._my_head = Coordinate(2, 2)
     board._board[board.my_head] = MY_HEAD
 
-    result = board.area_value(MOVE_RIGHT)
-    assert result == 44
+    result = board.area_rank(MOVE_RIGHT)
+    assert result == 24
+
+
+def test_my_length():
+    # #####
+    # #####
+    # ##M##
+    # ##MM#
+    # #####
+    board = Board.from_height_and_width(5, 5)
+    board._my_head = Coordinate(2, 2)
+    board._board[board.my_head] = MY_HEAD
+    board._board[Coordinate(2, 3)] = MY_BODY
+    board._board[Coordinate(3, 3)] = MY_BODY
+
+    result = board.my_length
+    assert result == 3

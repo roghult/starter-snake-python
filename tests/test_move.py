@@ -1,5 +1,5 @@
-from board import Board, Coordinate, EMPTY, OTHER_SNAKE_HEAD, FOOD, MY_HEAD, MOVE_UP, MOVE_DOWN, MOVE_RIGHT
-from move import food_that_i_am_closest, move_towards_largest_area
+from board import Board, Coordinate, EMPTY, OTHER_SNAKE_HEAD, FOOD, MY_HEAD, MOVE_UP, MOVE_DOWN, MOVE_RIGHT, MOVE_LEFT
+from move import food_that_i_am_closest, moves_sorted_by_area_rank
 
 
 def test_food_that_i_am_closest_without_other_snakes():
@@ -39,7 +39,7 @@ def test_food_that_i_am_closest_without_other_snakes():
     )
     board._my_head = Coordinate(1, 1)
 
-    result = food_that_i_am_closest(board)
+    result = food_that_i_am_closest(board, board.available_moves())
     assert result == MOVE_RIGHT
 
 
@@ -80,11 +80,11 @@ def test_food_that_i_am_closest_with_other_snakes():
     )
     board._my_head = Coordinate(2, 4)
 
-    result = food_that_i_am_closest(board)
+    result = food_that_i_am_closest(board, board.available_moves())
     assert result == MOVE_UP
 
 
-def test_move_towards_largest_area():
+def test_move_towards_best_value():
     # ##A##
     # SS#SS
     # #SM##
@@ -121,5 +121,20 @@ def test_move_towards_largest_area():
     )
     board._my_head = Coordinate(2, 2)
 
-    result = move_towards_largest_area(board, board.available_moves())
-    assert result == MOVE_RIGHT
+    result = moves_sorted_by_area_rank(board, board.available_moves())
+    assert result == [(MOVE_RIGHT, 12), (MOVE_UP, 6.5)]
+
+
+def test_wants_to_move_towards_apple():
+    # #####
+    # #####
+    # A#M##
+    # #####
+    # #####
+    board = Board.from_height_and_width(5, 5)
+    board._my_head = Coordinate(2, 2)
+    board._board[Coordinate(0, 2)] = FOOD
+    board._board[board.my_head] = MY_HEAD
+
+    result = moves_sorted_by_area_rank(board, board.available_moves())
+    assert result == [(MOVE_DOWN, 24.5), (MOVE_LEFT, 24.5), (MOVE_UP, 24.5), (MOVE_RIGHT, 24.5)]

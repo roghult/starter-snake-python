@@ -3,6 +3,7 @@ from typing import Dict, List, Optional, Set
 EMPTY = ''
 SNAKE = 'S'
 MY_HEAD = 'MH'
+MY_BODY = 'MB'
 OTHER_SNAKE_HEAD = 'H'
 FOOD = 'F'
 DIRECTION_UP = 'U'
@@ -114,6 +115,11 @@ class Board:
         return self._my_head
 
     @property
+    def my_length(self) -> int:
+        me = {MY_HEAD, MY_BODY}
+        return len([each for each in self._board.values() if each in me])
+
+    @property
     def board(self):
         return self._board
 
@@ -125,7 +131,7 @@ class Board:
     def opponent_heads(self) -> List[Coordinate]:
         return [key for (key, value) in self._board.items() if value == OTHER_SNAKE_HEAD]
 
-    def area_value(self, move: str) -> int:
+    def area_rank(self, move: str) -> int:
         """
         Calculates the value for the are available in the given direction
         from the head. The value is the sum of all values for nodes that can
@@ -143,12 +149,9 @@ class Board:
             coordinate = queue.pop(0)
             visited.add(coordinate)
             moves = self.available_moves(coordinate)
+            value += 1
             if self._board[coordinate] == FOOD:
                 value += 0.5
-            if len(moves) == 2:
-                value += 1
-            if len(moves) > 2:
-                value += 2
             move_coordinates = [coordinate.move(move) for move in moves]
             move_coordinates = [each for each in move_coordinates if each not in visited and each not in queue]
             queue.extend(move_coordinates)
@@ -184,20 +187,25 @@ class Board:
         snake_data = board_data["board"]["snakes"]
         snakes_coordinates = [data["body"] for data in snake_data]
         for snake_coordinates in snakes_coordinates:
-            head_coordinate = snake_coordinates[0]
-            self._board[Coordinate(head_coordinate["x"], head_coordinate["y"])] = OTHER_SNAKE_HEAD
-            for body_coordinate in snake_coordinates[1:]:
-                self._board[Coordinate(body_coordinate["x"], body_coordinate["y"])] = SNAKE
+            head = snake_coordinates[0]
+            head_coordinate = Coordinate(head["x"], head["y"])
+            self._board[head_coordinate] = OTHER_SNAKE_HEAD
+            for body in snake_coordinates[1:]:
+                body_coordinate = Coordinate(body["x"], body["y"])
+                self._board[body_coordinate] = SNAKE
 
     def _update_my_snake(self, board_data):
         my_snake_coordinates = board_data["you"]["body"]
-        my_head_coordinates = my_snake_coordinates[0]
-        self._my_head = Coordinate(my_head_coordinates["x"], my_head_coordinates["y"])
-        self._board[self._my_head] = MY_HEAD
         if len(my_snake_coordinates) == 1:
             self._my_direction = None
         else:
-            head, body = my_snake_coordinates[:2]
-            head_coordinate = Coordinate(head['x'], head['y'])
-            body_coordinate = Coordinate(body['x'], body['y'])
-            self._my_direction = head_coordinate.direction_from(body_coordinate)
+            head = my_snake_coordinates[0]
+            head_coordinate = Coordinate(head["x"], head["y"])
+            self._my_head = head_coordinate
+            self._board[head_coordinate] = MY_HEAD
+            my_body = my_snake_coordinates[1:]
+            first_body_coordinate = Coordinate(my_body[0]["x"], my_body[0]["y"])
+            self._my_direction = head_coordinate.direction_from(first_body_coordinate)
+            for body in my_body:
+                body_coordinate = Coordinate(body["x"], body["y"])
+                self._board[body_coordinate] = MY_BODY
