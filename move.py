@@ -51,7 +51,7 @@ def food_that_i_am_closest(board: Board, available_moves: Set[str]) -> Optional[
 
     for food_coordinate, distance in sorted_food_coordinate_and_distance:
         opponent_distances = [each.distance(food_coordinate) for each in board.opponent_heads]
-        if all(each >= distance for each in opponent_distances):
+        if all(each > distance for each in opponent_distances):
             return move_from_direction(food_coordinate.direction_from(board.my_head), available_moves)
 
     return None
